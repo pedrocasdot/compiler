@@ -124,66 +124,6 @@ bool isIden(char c)
     return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
-   static const std::map<std::string, std::string> keywords = {
-        {"auto", "TOKEN_AUTO"}, {"break", "TOKEN_BREAK"}, {"case", "TOKEN_CASE"}, {"char", "TOKEN_CHAR"},
-        {"const", "TOKEN_CONST"}, {"continue", "TOKEN_CONTINUE"}, {"default", "TOKEN_DEFAULT"}, {"do", "TOKEN_DO"},
-        {"double", "TOKEN_DOUBLE"}, {"else", "TOKEN_ELSE"}, {"enum", "TOKEN_ENUM"}, {"extern", "TOKEN_EXTERN"},
-        {"float", "TOKEN_FLOAT"}, {"for", "TOKEN_FOR"}, {"goto", "TOKEN_GOTO"}, {"if", "TOKEN_IF"},
-        {"inline", "TOKEN_INLINE"}, {"int", "TOKEN_INT"}, {"long", "TOKEN_LONG"}, {"register", "TOKEN_REGISTER"},
-        {"restrict", "TOKEN_RESTRICT"}, {"return", "TOKEN_RETURN"}, {"short", "TOKEN_SHORT"},
-        {"signed", "TOKEN_SIGNED"}, {"sizeof", "TOKEN_SIZEOF"}, {"static", "TOKEN_STATIC"},
-        {"struct", "TOKEN_STRUCT"}, {"switch", "TOKEN_SWITCH"}, {"typedef", "TOKEN_TYPEDEF"},
-        {"union", "TOKEN_UNION"}, {"unsigned", "TOKEN_UNSIGNED"}, {"void", "TOKEN_VOID"},
-        {"while", "TOKEN_WHILE"}
-    };
-    static const std::map<std::string, std::string> operators1 = {
-        {"&&", "TOKEN_E_LOGICO"}, 
-        {"||", "TOKEN_OU_LOGICO"}, 
-        {"++", "TOKEN_INCREMENTO"}, 
-        {"--", "TOKEN_DECREMENTO"}, 
-        {"+=", "TOKEN_SOMA_ATRIBUICAO"}, 
-        {"-=", "TOKEN_SUBTRACAO_ATRIBUICAO"}, 
-        {"*=", "TOKEN_MULTIPLICACAO_ATRIBUICAO"}, 
-        {"/=", "TOKEN_DIVISAO_ATRIBUICAO"}, 
-        {"%=", "TOKEN_RESTO_ATRIBUICAO"}, 
-        {"|=", "TOKEN_OU_BIT_A_BIT_ATRIBUICAO"}, 
-        {"&=", "TOKEN_E_BIT_A_BIT_ATRIBUICAO"}, 
-        {"^=", "TOKEN_OU_EXCLUSIVO_BIT_A_BIT_ATRIBUICAO"}, 
-        {">=", "TOKEN_MAIOR_IGUAL"}, 
-        {"<=", "TOKEN_MENOR_IGUAL"}, 
-        {"!=", "TOKEN_DIFERENTE"}, 
-        {"==", "TOKEN_IGUAL"}, 
-        {"->", "TOKEN_SETA"}, 
-        {">>", "TOKEN_DESLOCAMENTO_DIREITA"}, 
-        {"<<", "TOKEN_DESLOCAMENTO_ESQUERDA"}
-    };
-
-    static const std::map<std::string, std::string> operators2 = {
-        {"+", "TOKEN_MAIS"}, 
-        {"-", "TOKEN_MENOS"}, 
-        {"*", "TOKEN_MULTIPLICACAO"}, 
-        {"/", "TOKEN_DIVISAO"}, 
-        {"%", "TOKEN_RESTO"}, 
-        {"&", "TOKEN_E_BIT_A_BIT"}, 
-        {"|", "TOKEN_OU_BIT_A_BIT"}, 
-        {"^", "TOKEN_OU_EXCLUSIVO_BIT_A_BIT"}, 
-        {"(", "TOKEN_PARENTESES_ESQUERDO"}, 
-        {")", "TOKEN_PARENTESES_DIREITO"}, 
-        {"[", "TOKEN_COLCHETES_ESQUERDO"}, 
-        {"]", "TOKEN_COLCHETES_DIREITO"}, 
-        {"{", "TOKEN_CHAVES_ESQUERDO"}, 
-        {"}", "TOKEN_CHAVES_DIREITO"}, 
-        {",", "TOKEN_VIRGULA"}, 
-        {"=", "TOKEN_ATRIBUICAO"}, 
-        {"\\", "TOKEN_BARRA_INVERTIDA"}, 
-        {"<", "TOKEN_MENOR_QUE"}, 
-        {">", "TOKEN_MAIOR_QUE"}, 
-        {".", "TOKEN_PONTO"}, 
-        {":", "TOKEN_DOIS_PONTOS"}, 
-        {"?", "TOKEN_INTERROGACAO"}, 
-        {"~", "TOKEN_BIT_A_BIT_NAO"}, 
-        {"!", "TOKEN_NEGACAO_LOGICA"}
-    };
 static std::set<char> opChar =
     {'+', '-', '*', '/', '%', '^', '>', '<', '!',
      '=', '(', ')', '[', ']', '{', '}', '.', ':', ',', '\\', '&', '|', '~',
@@ -249,11 +189,6 @@ void Lexer::lerTokens()
     catch (std::runtime_error &e)
     {
         std::cerr << e.what() << std::endl;
-    }
-    for (auto x : tokenStream)
-    {
-        std::cout << x.toString() << std::endl;
-        std::cout << std::endl;
     }
 }
 
@@ -341,7 +276,8 @@ Token Lexer::numero()
             consumir();
         }
     }
-    return makeToken(ty, numero, ty ==Token::Type::DOUBLE ? "TOKEN_DOUBLE" : "TOKEN_INT" , linha, coluna);
+    // std::cerr << numero << " "<< (Token::Type::DOUBLE == Token::Type::DOUBLE) <<std::endl;
+    return makeToken(ty, numero, ty == Token::Type::DOUBLE ? "TOKEN_DOUBLE" : "TOKEN_INT" , linha, coluna);
 }
 
 Token Lexer::punctuator()
@@ -368,7 +304,7 @@ Token Lexer::punctuator()
     }
     else
     {
-        throw std::runtime_error(std::string("unable to parse ") + cur());
+        throw std::runtime_error(std::string("Erro: ") + cur());
     }
 }
 
@@ -407,7 +343,7 @@ Token Lexer::string()
     if (c == '\'')
     {
         if (s.length() > 1)
-            throw std::runtime_error(std::string("char literal to long"));
+            throw std::runtime_error(std::string(""));
         return makeToken(Token::Type::INT, s.length() == 1 ? s : "0", "TOKEN_INT", linha, coluna);
     }
 
@@ -416,5 +352,8 @@ Token Lexer::string()
 
 std::vector<Token> &Lexer::todosTokens()
 {
+    // for(auto x : tokenStream){
+    //     std::cout <<  x.toString() <<endl;
+    // }
     return tokenStream;
 }
